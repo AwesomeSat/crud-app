@@ -9,11 +9,22 @@ const EditableRow = ({
     <tr>
       <td>
         <input
+          type="file"
+          required="required"
+          placeholder="avatar"
+          name="avatar"
+          value={editFormData.avatar}
+          onChange={handleEditFormChange}
+          className='input'
+        ></input>
+      </td>
+      <td>
+        <input
           type="text"
           required="required"
-          placeholder="Enter a name..."
-          name="fullName"
-          value={editFormData.fullName}
+          placeholder="First Name"
+          name="firstName"
+          value={editFormData.first_name}
           onChange={handleEditFormChange}
         ></input>
       </td>
@@ -21,19 +32,9 @@ const EditableRow = ({
         <input
           type="text"
           required="required"
-          placeholder="Enter an address..."
-          name="address"
-          value={editFormData.address}
-          onChange={handleEditFormChange}
-        ></input>
-      </td>
-      <td>
-        <input
-          type="text"
-          required="required"
-          placeholder="Enter a phone number..."
-          name="phoneNumber"
-          value={editFormData.phoneNumber}
+          placeholder="lastName"
+          name="lastName"
+          value={editFormData.last_name}
           onChange={handleEditFormChange}
         ></input>
       </td>
@@ -41,7 +42,7 @@ const EditableRow = ({
         <input
           type="email"
           required="required"
-          placeholder="Enter an email..."
+          placeholder="Email"
           name="email"
           value={editFormData.email}
           onChange={handleEditFormChange}

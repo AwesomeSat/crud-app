@@ -1,28 +1,38 @@
-import React, { useState, Fragment } from "react";
+import React, { useState,useEffect, Fragment } from "react";
 import { nanoid } from "nanoid";
 import "./App.css";
-import data from "./mock-data.json";
 import ReadOnlyRow from "./components/ReadOnlyRow";
 import EditableRow from "./components/EditableRow";
+import axios from "axios";
 
 const App = () => {
-  const [contacts, setContacts] = useState(data);
+  const [contacts, setcontacts] = useState([]);
   const [addFormData, setAddFormData] = useState({
-    fullName: "",
-    address: "",
-    phoneNumber: "",
+    first_name: "",
+    last_name: "",
+    avatar: "",
     email: "",
   });
 
   const [editFormData, setEditFormData] = useState({
-    fullName: "",
-    address: "",
-    phoneNumber: "",
+    first_name: "",
+    last_name: "",
+    avatar: "",
     email: "",
   });
 
   const [editContactId, setEditContactId] = useState(null);
-
+  const fetchData = async()=>{
+    const data = await axios.get('https://reqres.in/api/users?page=2');
+    return data;
+  }
+  useEffect(()=>{
+    const fetchContacts = async()=>{
+      const res = await fetchData(); 
+      setcontacts(res.data.data);
+    }
+   fetchContacts();
+  },[])
   const handleAddFormChange = (event) => {
     event.preventDefault();
 
@@ -47,19 +57,19 @@ const App = () => {
     setEditFormData(newFormData);
   };
 
-  const handleAddFormSubmit = (event) => {
+  const handleAddFormSubmit = async(event) => {
     event.preventDefault();
 
     const newContact = {
       id: nanoid(),
-      fullName: addFormData.fullName,
-      address: addFormData.address,
-      phoneNumber: addFormData.phoneNumber,
+      first_name: addFormData.first_name,
+      last_name: addFormData.last_name,
+      avatar: addFormData.avatar,
       email: addFormData.email,
     };
 
     const newContacts = [...contacts, newContact];
-    setContacts(newContacts);
+    setcontacts(newContacts);
   };
 
   const handleEditFormSubmit = (event) => {
@@ -67,9 +77,9 @@ const App = () => {
 
     const editedContact = {
       id: editContactId,
-      fullName: editFormData.fullName,
-      address: editFormData.address,
-      phoneNumber: editFormData.phoneNumber,
+      first_name: editFormData.first_name,
+      last_name: editFormData.last_name,
+      avatar: editFormData.avatar,
       email: editFormData.email,
     };
 
@@ -79,7 +89,7 @@ const App = () => {
 
     newContacts[index] = editedContact;
 
-    setContacts(newContacts);
+    setcontacts(newContacts);
     setEditContactId(null);
   };
 
@@ -88,9 +98,9 @@ const App = () => {
     setEditContactId(contact.id);
 
     const formValues = {
-      fullName: contact.fullName,
-      address: contact.address,
-      phoneNumber: contact.phoneNumber,
+      first_name: contact.first_name,
+      last_name: contact.last_name,
+      avatar: contact.avatar,
       email: contact.email,
     };
 
@@ -108,20 +118,60 @@ const App = () => {
 
     newContacts.splice(index, 1);
 
-    setContacts(newContacts);
+    setcontacts(newContacts);
   };
-
+  console.log(contacts);
   return (
     <div className="app-container">
-      <form onSubmit={handleEditFormSubmit}>
+      <form onSubmit={handleAddFormSubmit} className='form'> 
+      <h2 style={{textAlign:'center',fontSize:'32px',backgroundColor:'#3498db',color:'#fff',borderRadius:'20px'}}>Add a Contact</h2>
+        <div style={{display:'flex',justifyContent:'space-around'}}>
+        <input
+          type="text"
+          name="first_name"
+          required="required"
+          placeholder="First Name"
+          onChange={handleAddFormChange}
+        />
+        <input
+          type="text"
+          name="last_name"
+          required="required"
+          placeholder="Last Name"
+          onChange={handleAddFormChange}
+        />
+        </div>
+        <div style={{width:'100%',marginTop:'20px',}}>
+         <input
+          type="text"
+          name="email"
+          required="required"
+          placeholder="Email"
+          onChange={handleAddFormChange}
+          style={{}}
+        />
+        </div>
+        <input
+          type="file"
+          name="avatar"
+          required="required"
+          placeholder="Avatar"
+          onChange={handleAddFormChange}
+          style={{padding:'10px',marginTop:'10px'}}
+        />
+        <div style={{padding:"0 40px",marginLeft:'auto'}}>
+          <button type="submit" className='btn'>Add</button>
+        </div>
+      </form>
+      <form onSubmit={handleEditFormSubmit} style={{width:'100%'}}>
         <table>
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Address</th>
-              <th>Phone Number</th>
+              <th>Avatar</th>
+              <th>First Name</th>
+              <th>Last Name</th>
               <th>Email</th>
-              <th>Actions</th>
+              <th>Options</th>
             </tr>
           </thead>
           <tbody>
@@ -141,42 +191,9 @@ const App = () => {
                   />
                 )}
               </Fragment>
-            ))}
+                ))}
           </tbody>
         </table>
-      </form>
-
-      <h2>Add a Contact</h2>
-      <form onSubmit={handleAddFormSubmit}>
-        <input
-          type="text"
-          name="fullName"
-          required="required"
-          placeholder="Enter a name..."
-          onChange={handleAddFormChange}
-        />
-        <input
-          type="text"
-          name="address"
-          required="required"
-          placeholder="Enter an addres..."
-          onChange={handleAddFormChange}
-        />
-        <input
-          type="text"
-          name="phoneNumber"
-          required="required"
-          placeholder="Enter a phone number..."
-          onChange={handleAddFormChange}
-        />
-        <input
-          type="email"
-          name="email"
-          required="required"
-          placeholder="Enter an email..."
-          onChange={handleAddFormChange}
-        />
-        <button type="submit">Add</button>
       </form>
     </div>
   );
